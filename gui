@@ -1,0 +1,189 @@
+using System;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
+using NUnit.Framework;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Firefox;
+using OpenQA.Selenium.Support.UI;
+
+namespace SeleniumTests
+{
+    [TestFixture]
+    public class Display
+    {
+        private IWebDriver driver;
+        private StringBuilder verificationErrors;
+        private string baseURL;
+        private bool acceptNextAlert = true;
+
+        [SetUp]
+        public void SetupTest()
+        {
+            driver = new FirefoxDriver();
+            baseURL = "https://www.katalon.com/";
+            verificationErrors = new StringBuilder();
+        }
+
+        [TearDown]
+        public void TeardownTest()
+        {
+            try
+            {
+                driver.Quit();
+            }
+            catch (Exception)
+            {
+                // Ignore errors if unable to close the browser
+            }
+            Assert.AreEqual("", verificationErrors.ToString());
+        }
+        [Test]
+        public void TheEmailTest()
+        {
+            driver.Navigate().GoToUrl("http://localhost/cars/cars/new.html");
+            driver.FindElement(By.XPath("(.//*[normalize-space(text()) and normalize-space(.)='Post your ad'])[1]/following::fieldset[1]")).Click();
+            driver.FindElement(By.Name("email")).Click();
+            driver.FindElement(By.Name("email")).Clear();
+            driver.FindElement(By.Name("email")).SendKeys("ravitejachowdary1237@gmail.com");
+            driver.FindElement(By.XPath("(.//*[normalize-space(text()) and normalize-space(.)='Vehicle Information:'])[1]/following::input[4]")).Click();
+            Assert.AreEqual("Please fill out all the fields", CloseAlertAndGetItsText());
+            Assert.AreEqual("Vehicle Information:", driver.FindElement(By.XPath("(.//*[normalize-space(text()) and normalize-space(.)='Personal Information:'])[1]/following::legend[1]")).Text);
+        }
+        [Test]
+        public void TheVehicleTest()
+        {
+            driver.Navigate().GoToUrl("http://localhost/cars/cars/new.html");
+            driver.FindElement(By.Name("make")).Clear();
+            driver.FindElement(By.Name("make")).SendKeys("honda");
+            driver.FindElement(By.Name("model")).Click();
+            driver.FindElement(By.Name("model")).Clear();
+            driver.FindElement(By.Name("model")).SendKeys("civic");
+            Assert.AreEqual("Vehicle Information:", driver.FindElement(By.XPath("(.//*[normalize-space(text()) and normalize-space(.)='Personal Information:'])[1]/following::legend[1]")).Text);
+        }
+        [Test]
+        
+       
+        public void TheAllFieldsTest()
+        {
+            driver.Navigate().GoToUrl("http://localhost/cars/cars/new.html");
+            driver.FindElement(By.Name("name")).Click();
+            driver.FindElement(By.Name("name")).Clear();
+            driver.FindElement(By.Name("name")).SendKeys("ravi");
+            driver.FindElement(By.Name("address")).Click();
+            driver.FindElement(By.Name("address")).Clear();
+            driver.FindElement(By.Name("address")).SendKeys("453 albert");
+            driver.FindElement(By.Name("city")).Click();
+            driver.FindElement(By.Name("city")).Clear();
+            driver.FindElement(By.Name("city")).SendKeys("peterborough");
+            driver.FindElement(By.Name("phone")).Click();
+            driver.FindElement(By.Name("phone")).Clear();
+            driver.FindElement(By.Name("phone")).SendKeys("705-977-2628");
+            driver.FindElement(By.Name("email")).Click();
+            driver.FindElement(By.Name("email")).Clear();
+            driver.FindElement(By.Name("email")).SendKeys("ravitejachowdary1237@gmail.com");
+            driver.FindElement(By.Name("make")).Click();
+            driver.FindElement(By.Name("make")).Clear();
+            driver.FindElement(By.Name("make")).SendKeys("honda");
+            driver.FindElement(By.Name("model")).Click();
+            driver.FindElement(By.Name("model")).Clear();
+            driver.FindElement(By.Name("model")).SendKeys("civic");
+            driver.FindElement(By.Name("year")).Click();
+            driver.FindElement(By.Name("year")).Clear();
+            driver.FindElement(By.Name("year")).SendKeys("2015");
+            driver.FindElement(By.Name("year")).SendKeys(Keys.Down);
+            driver.FindElement(By.Name("year")).Clear();
+            driver.FindElement(By.Name("year")).SendKeys("2014");
+            driver.FindElement(By.XPath("(.//*[normalize-space(text()) and normalize-space(.)='Vehicle Information:'])[1]/following::input[4]")).Click();
+            Assert.AreEqual("Ad Details", driver.FindElement(By.XPath("(.//*[normalize-space(text()) and normalize-space(.)='Personal Information:'])[1]/preceding::h1[1]")).Text);
+        }
+        [Test]
+        public void TheErrorTest()
+        {
+            driver.Navigate().GoToUrl("http://localhost/cars/cars/new.html");
+            driver.FindElement(By.Name("city")).Click();
+            driver.FindElement(By.Name("city")).Clear();
+            driver.FindElement(By.Name("city")).SendKeys("peterborough");
+            driver.FindElement(By.Name("phone")).Click();
+            driver.FindElement(By.Name("phone")).Clear();
+            driver.FindElement(By.Name("phone")).SendKeys("705977262");
+            driver.FindElement(By.Name("email")).Click();
+            driver.FindElement(By.Name("email")).Clear();
+            driver.FindElement(By.Name("email")).SendKeys("ravitejachowdary1237@gmail.com");
+            driver.FindElement(By.Name("make")).Click();
+            driver.FindElement(By.Name("make")).Clear();
+            driver.FindElement(By.Name("make")).SendKeys("honda");
+            driver.FindElement(By.Name("model")).Click();
+            driver.FindElement(By.Name("model")).Clear();
+            driver.FindElement(By.Name("model")).SendKeys("civic");
+            driver.FindElement(By.Name("year")).Click();
+            driver.FindElement(By.Name("year")).Clear();
+            driver.FindElement(By.Name("year")).SendKeys("2019");
+            driver.FindElement(By.XPath("(.//*[normalize-space(text()) and normalize-space(.)='Vehicle Information:'])[1]/following::input[4]")).Click();
+            Assert.AreEqual("Please fill out all the fields", CloseAlertAndGetItsText());
+            Assert.AreEqual("Vehicle Information:", driver.FindElement(By.XPath("(.//*[normalize-space(text()) and normalize-space(.)='Personal Information:'])[1]/following::legend[1]")).Text);
+        }
+
+        [Test]
+        public void TheDisplayTest()
+        {
+            driver.Navigate().GoToUrl("http://localhost/cars/cars/new.html");
+            driver.FindElement(By.Name("name")).Click();
+            driver.FindElement(By.Name("name")).Clear();
+            driver.FindElement(By.Name("name")).SendKeys("ravi");
+            driver.FindElement(By.Name("address")).Click();
+            driver.FindElement(By.Name("address")).Clear();
+            driver.FindElement(By.Name("address")).SendKeys("14 arthur");
+            driver.FindElement(By.Name("city")).Click();
+            Assert.AreEqual("Personal Information:", driver.FindElement(By.XPath("(.//*[normalize-space(text()) and normalize-space(.)='Post your ad'])[1]/following::legend[1]")).Text);
+        }
+        private bool IsElementPresent(By by)
+        {
+            try
+            {
+                driver.FindElement(by);
+                return true;
+            }
+            catch (NoSuchElementException)
+            {
+                return false;
+            }
+        }
+
+        private bool IsAlertPresent()
+        {
+            try
+            {
+                driver.SwitchTo().Alert();
+                return true;
+            }
+            catch (NoAlertPresentException)
+            {
+                return false;
+            }
+        }
+
+        private string CloseAlertAndGetItsText()
+        {
+            try
+            {
+                IAlert alert = driver.SwitchTo().Alert();
+                string alertText = alert.Text;
+                if (acceptNextAlert)
+                {
+                    alert.Accept();
+                }
+                else
+                {
+                    alert.Dismiss();
+                }
+                return alertText;
+            }
+            finally
+            {
+                acceptNextAlert = true;
+            }
+        }
+    }
+}
+
